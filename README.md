@@ -1,3 +1,4 @@
+<code>
 version: '3.7'
 
 volumes:
@@ -29,4 +30,4 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - jenkins-ssh-slave
-
+</code>
