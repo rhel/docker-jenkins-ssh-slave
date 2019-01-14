@@ -6,6 +6,7 @@ ARG group=jenkins
 ARG uid=1000
 ARG gid=1000
 ARG JENKINS_AGENT_HOME=/home/${user}
+ARG DOCKER_COMPOSE_VERSION 1.22.0
 
 ENV JENKINS_AGENT_HOME ${JENKINS_AGENT_HOME}
 
@@ -13,19 +14,18 @@ RUN addgroup -g ${gid} ${group} \
 	&& adduser -D -h "${JENKINS_AGENT_HOME}" -u "${uid}" -G "${group}" -s /bin/bash "${user}" \
 	&& passwd -u jenkins
 
-# setup SSH server
 RUN apk update \
-    && apk add --no-cache sudo bash openssh openjdk8 git subversion curl wget 
+    && apk add --no-cache bash openssh openjdk8 git subversion curl wget 
 RUN sed -i /etc/ssh/sshd_config \
         -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
         -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
         -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
         -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
         -e 's/#LogLevel.*/LogLevel INFO/' \
-    && mkdir /var/run/sshd \
-    && echo "%${group} ALL=(ALL) NOPASSWD: /usr/local/bin/docker" > /etc/sudoers.d/sudoers
+    && mkdir /var/run/sshd
+RUN wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) \
+    && chmod +x /usr/local/bin/docker-compose
 
-#Update credential for Jenkins user
 RUN delgroup ping \
     && addgroup -g 999 docker \
     && addgroup jenkins docker \
