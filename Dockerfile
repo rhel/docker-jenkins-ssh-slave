@@ -1,21 +1,21 @@
 FROM docker:18
 LABEL MAINTAINER="Artyom Nosov <chip@unixstyle.ru>"
 
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
-ARG JENKINS_AGENT_HOME=/home/${user}
+ARG USER=jenkins
+ARG GROUP=jenkins
+ARG UID=1000
+ARG GID=1000
+ARG JENKINS_AGENT_HOME=/home/${USER}
 ARG DOCKER_COMPOSE_VERSION=1.22.0
 
 ENV JENKINS_AGENT_HOME ${JENKINS_AGENT_HOME}
 
-RUN addgroup -g ${gid} ${group} \
-	&& adduser -D -h "${JENKINS_AGENT_HOME}" -u "${uid}" -G "${group}" -s /bin/bash "${user}" \
+RUN addgroup -g ${GID} ${GROUP} \
+	&& adduser -D -h "${JENKINS_AGENT_HOME}" -u "${UID}" -G "${GROUP}" -s /bin/bash "${USER}" \
 	&& passwd -u jenkins
 
 RUN apk update \
-    && apk add --no-cache bash openssh openjdk8 git subversion curl wget 
+    && apk add --no-cache bash openssh openjdk8 git py-pip subversion curl wget
 RUN sed -i /etc/ssh/sshd_config \
         -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
         -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
@@ -23,8 +23,8 @@ RUN sed -i /etc/ssh/sshd_config \
         -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
         -e 's/#LogLevel.*/LogLevel INFO/' \
     && mkdir /var/run/sshd
-RUN wget -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) \
-    && chmod +x /usr/local/bin/docker-compose
+
+RUN pip install --no-cache-dir docker-compose==${DOCKER_COMPOSE_VERSION}
 
 RUN delgroup ping \
     && addgroup -g 999 docker \
@@ -39,4 +39,3 @@ COPY entrypoint /usr/local/bin/entrypoint
 EXPOSE 22
 
 ENTRYPOINT ["entrypoint"]
-
