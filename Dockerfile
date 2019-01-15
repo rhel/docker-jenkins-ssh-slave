@@ -31,7 +31,7 @@ RUN delgroup ping \
     && addgroup jenkins docker \
     && ln -s /usr/local/bin/docker /usr/bin/docker 
 
-VOLUME "${JENKINS_AGENT_HOME}" "/tmp" "/run"
+VOLUME "${JENKINS_AGENT_HOME}"
 WORKDIR "${JENKINS_AGENT_HOME}"
 
 COPY entrypoint /usr/local/bin/entrypoint
