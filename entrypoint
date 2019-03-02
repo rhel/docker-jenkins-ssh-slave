@@ -2,7 +2,6 @@
 
 set -ex
 
-
 # The MIT License
 #
 #  Copyright (c) 2015, CloudBees, Inc.
@@ -27,9 +26,9 @@ set -ex
 #  THE SOFTWARE.
 
 # Usage:
-#  docker run jenkinsci/ssh-slave <public key>
+#  docker run pearbox/jenkins-ssh-slave <public key>
 # or
-#  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" jenkinsci/ssh-slave
+#  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" pearbox/jenkins-ssh-slave
 
 write_key() {
 	mkdir -p "${JENKINS_AGENT_HOME}/.ssh"
