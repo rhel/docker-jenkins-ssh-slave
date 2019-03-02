@@ -31,13 +31,13 @@ set -ex
 #  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" pearbox/jenkins-ssh-slave
 
 write_key() {
-	mkdir -p "${JENKINS_AGENT_HOME}/.ssh"
-	echo "$1" > "${JENKINS_AGENT_HOME}/.ssh/authorized_keys"
-	chmod 0700 -R "${JENKINS_AGENT_HOME}/.ssh"
+  mkdir -p "$JENKINS_AGENT_HOME/.ssh"
+  echo "$1" > "$JENKINS_AGENT_HOME/.ssh/authorized_keys"
+  chmod 0700 -R "$JENKINS_AGENT_HOME/.ssh"
 }
 
 if [[ $JENKINS_SLAVE_SSH_PUBKEY == ssh-* ]]; then
-  write_key "${JENKINS_SLAVE_SSH_PUBKEY}"
+  write_key "$JENKINS_SLAVE_SSH_PUBKEY"
 fi
 if [[ $# -gt 0 ]]; then
   if [[ $1 == ssh-* ]]; then
@@ -48,7 +48,7 @@ if [[ $# -gt 0 ]]; then
   fi
 fi
 
-chown -Rf jenkins:jenkins "${JENKINS_AGENT_HOME}"
+chown -Rf jenkins:jenkins "$JENKINS_AGENT_HOME"
 
 # ensure variables passed to docker container are also exposed to ssh sessions
 env | grep _ >> /etc/environment
